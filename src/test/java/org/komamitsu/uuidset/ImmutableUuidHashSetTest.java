@@ -1,8 +1,10 @@
 package org.komamitsu.uuidset;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,5 +41,16 @@ public class ImmutableUuidHashSetTest
         assertThat(uuidHashSet.contains(UUID.randomUUID().toString().toLowerCase()), is(false));
         assertThat(uuidHashSet.contains(UUID.randomUUID().toString().toUpperCase()), is(false));
         assertThat(uuidHashSet.contains("ab"), is(false));
+    }
+
+    @Test
+    public void toBytes()
+            throws IOException
+    {
+        byte[] bytes = uuidHashSet.toBytes();
+        ImmutableUuidHashSet restoredSet = new ImmutableUuidHashSet(bytes);
+
+        assertThat(restoredSet.size(), is(strings.size()));
+        assertThat(uuidHashSet.contains(strings.get(0)), is(true));
     }
 }
