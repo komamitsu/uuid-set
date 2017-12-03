@@ -1,6 +1,5 @@
 package org.komamitsu.uuidset;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.Before;
 import org.junit.Test;
 
