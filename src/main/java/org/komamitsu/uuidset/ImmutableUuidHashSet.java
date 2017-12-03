@@ -1,5 +1,6 @@
 package org.komamitsu.uuidset;
 
+import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -7,22 +8,30 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-public class ImmutableUuidSet
+public class ImmutableUuidHashSet
+    extends AbstractCollection<String>
     implements Set<String>
 {
     private HashSet<UUID> uuids = new HashSet<>();
     private HashSet<String> strings = new HashSet<>();
 
+    public ImmutableUuidHashSet(Collection<String> values)
+    {
+        for (String value : values) {
+            UUID uuid = parseAsUuid(value);
+            if (uuid == null) {
+                strings.add(value);
+            }
+            else {
+                uuids.add(uuid);
+            }
+        }
+    }
+
     @Override
     public int size()
     {
         return uuids.size() + strings.size();
-    }
-
-    @Override
-    public boolean isEmpty()
-    {
-        return size() == 0;
     }
 
     private UUID parseAsUuid(String value)
@@ -82,26 +91,6 @@ public class ImmutableUuidSet
 
             throw new NoSuchElementException();
         }
-    }
-
-    @Override
-    public Object[] toArray()
-    {
-        Object[] objects = new Object[size()];
-        Iterator<String> iterator = iterator();
-        int i = 0;
-        while (iterator.hasNext()) {
-            objects[i] = iterator.next();
-            i++;
-        }
-        return objects;
-    }
-
-    @Override
-    public <T> T[] toArray(T[] a)
-    {
-        // FIXME
-        return null;
     }
 
     @Override
