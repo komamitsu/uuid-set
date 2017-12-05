@@ -9,21 +9,41 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @State(Scope.Benchmark)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class ImmutableUuidHashSetBenchmark
+public class HashSetBenchmark
     extends BaseSetBenchmark
 {
-    private ImmutableUuidHashSet hashSet = new ImmutableUuidHashSet(strings);
+    private HashSet<String> hashSet = new HashSet<>(strings);
     private byte[] bytes;
 
     @Setup
     public void setUp()
             throws JsonProcessingException
     {
-        bytes = hashSet.toBytes();
+        bytes = getBytesFromSet(hashSet);
+    }
+
+    private byte[] getBytesFromSet(Set<String> set)
+    {
+        StringBuilder sb = new StringBuilder();
+        boolean isFirst = true;
+        for (String aSet : set) {
+            if (isFirst) {
+                isFirst = false;
+            }
+            else {
+                sb.append(',');
+            }
+            sb.append(aSet);
+        }
+
+        return sb.toString().getBytes();
     }
 
     @Benchmark
@@ -38,13 +58,15 @@ public class ImmutableUuidHashSetBenchmark
     public void toBytes()
             throws JsonProcessingException
     {
-        hashSet.toBytes();
+        getBytesFromSet(hashSet);
     }
 
     @Benchmark
     public void restoreFromBytes()
             throws IOException
     {
-        new ImmutableUuidHashSet(bytes);
+        String s = new String(bytes);
+        String[] strings = s.split(",");
+        new HashSet<>(Arrays.asList(strings));
     }
 }
