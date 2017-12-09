@@ -3,7 +3,6 @@ package org.komamitsu.uuidset;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.komamitsu.fastuuidparser.FastUuidParser;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import java.io.IOException;
@@ -17,7 +16,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-public class ImmutableUuidHashSet
+public class ImmutableUuidSortedSet
     extends AbstractCollection<String>
     implements Set<String>
 {
@@ -51,7 +50,7 @@ public class ImmutableUuidHashSet
         }
     }
 
-    public ImmutableUuidHashSet(Collection<String> values)
+    public ImmutableUuidSortedSet(Collection<String> values)
     {
         for (String value : values) {
             UUID uuid = parseAsUuid(value);
@@ -64,7 +63,7 @@ public class ImmutableUuidHashSet
         }
     }
 
-    public ImmutableUuidHashSet(byte[] bytes)
+    public ImmutableUuidSortedSet(byte[] bytes)
             throws IOException
     {
         Stored stored = objectMapper.readValue(bytes, Stored.class);
@@ -89,7 +88,7 @@ public class ImmutableUuidHashSet
     private UUID parseAsUuid(String value)
     {
         try {
-            return FastUuidParser.fromString(value);
+            return UUID.fromString(value);
         }
         catch (IllegalArgumentException e) {
             return null;
